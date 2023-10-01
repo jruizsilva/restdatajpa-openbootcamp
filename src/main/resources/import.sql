@@ -1,0 +1,5 @@
+insert into books (title, author, release_date, pages, price, online) values ('Films to Keep You Awake: The Christmas Tale (Películas para no dormir: Cuento de navidad)', 'Aundrea Bayfield', '1982-10-28', 790, 921.81, true);
+insert into books (title, author, release_date, pages, price, online) values ('Mount St. Elias', 'Phillis Philot', '2009-08-17', 314, 226.09, true);
+insert into books (title, author, release_date, pages, price, online) values ('First Wives Club, The', 'Gabie Chelam', '1905-09-11', 128, 924.44, false);
+insert into books (title, author, release_date, pages, price, online) values ('Well Spent Life, A', 'Waylin Officer', '2004-10-21', 352, 943.27, false);
+insert into books (title, author, release_date, pages, price, online) values ('Low Down, The', 'Inga Surguine', '1931-12-13', 366, 216.7, true);
