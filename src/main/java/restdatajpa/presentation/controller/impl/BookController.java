@@ -2,6 +2,7 @@ package restdatajpa.presentation.controller.impl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,17 +34,19 @@ public class BookController {
     @PutMapping
     public ResponseEntity<Void> update(@Valid @RequestBody final BookEntity bookEntity) {
         Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookEntity.getId());
-        if (bookEntityOptional.isEmpty()) {
-            return ResponseEntity.notFound()
+        if (bookEntityOptional.isPresent()) {
+            iBookRepository.save(bookEntity);
+            return ResponseEntity.noContent()
                                  .build();
         }
-        return ResponseEntity.noContent()
+        return ResponseEntity.notFound()
                              .build();
     }
 
     @PostMapping
     public ResponseEntity<BookEntity> create(@Valid @RequestBody final BookEntity bookEntity) {
-        return ResponseEntity.ok(iBookRepository.save(bookEntity));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(iBookRepository.save(bookEntity));
     }
 
     @DeleteMapping("/{bookId}")
