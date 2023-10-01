@@ -1,4 +1,4 @@
-package restdatajpa.presentation.controller.impl;
+package restdatajpa.presentation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import restdatajpa.persistence.IBookRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Validated
 public class BookController {
     private final IBookRepository iBookRepository;
+    private final Logger log = Logger.getLogger(BookController.class.getName());
 
     @GetMapping
     public ResponseEntity<List<BookEntity>> findAll() {
@@ -31,28 +33,49 @@ public class BookController {
         return ResponseEntity.of(bookEntityOptional);
     }
 
-    @PutMapping
-    public ResponseEntity<Void> update(@Valid @RequestBody final BookEntity bookEntity) {
-        Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookEntity.getId());
-        if (bookEntityOptional.isPresent()) {
-            iBookRepository.save(bookEntity);
-            return ResponseEntity.noContent()
-                                 .build();
-        }
-        return ResponseEntity.notFound()
-                             .build();
-    }
-
     @PostMapping
     public ResponseEntity<BookEntity> create(@Valid @RequestBody final BookEntity bookEntity) {
+        if (bookEntity.getId() != null) {
+            log.warning("Trying to create a book with id");
+            return ResponseEntity.badRequest()
+                                 .build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(iBookRepository.save(bookEntity));
     }
 
+    @PutMapping
+    public ResponseEntity<BookEntity> update(@Valid @RequestBody final BookEntity bookEntity) {
+        if (bookEntity.getId() == null) {
+            log.warning("Trying to update a non existent book");
+            return ResponseEntity.badRequest()
+                                 .build();
+        }
+        if (!iBookRepository.existsById(bookEntity.getId())) {
+            log.warning("Trying to update a non existent book");
+            return ResponseEntity.notFound()
+                                 .build();
+        }
+        ;
+        return ResponseEntity.ok(iBookRepository.save(bookEntity));
+    }
+
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteById(@PathVariable final Long bookId) {
-        Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookId);
-        bookEntityOptional.ifPresent(iBookRepository::delete);
+        if (!iBookRepository.existsById(bookId)) {
+            log.warning("Trying to delete a non existent book");
+            return ResponseEntity.notFound()
+                                 .build();
+        }
+        iBookRepository.deleteById(bookId);
+        return ResponseEntity.noContent()
+                             .build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAll() {
+        log.info("Removing all books");
+        iBookRepository.deleteAll();
         return ResponseEntity.noContent()
                              .build();
     }

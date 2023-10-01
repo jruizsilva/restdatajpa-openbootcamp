@@ -20,6 +20,7 @@ public class ControllerAdvice {
                                                                                                  .substring(0, 17));
         problemDetail.setProperty("errors", mapErrors(ex.getBindingResult()
                                                         .getFieldErrors()));
+        System.out.println("aca");
 
         return problemDetail;
     }
