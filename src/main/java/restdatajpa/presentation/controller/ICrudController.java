@@ -9,9 +9,9 @@ public interface ICrudController<T, N> {
 
     ResponseEntity<T> findById(N id);
 
-    ResponseEntity<T> update(T item);
-
     ResponseEntity<T> create(T item);
 
-    ResponseEntity<T> deleteById(N id);
+    ResponseEntity<Void> update(T item);
+
+    ResponseEntity<Void> deleteById(N id);
 }

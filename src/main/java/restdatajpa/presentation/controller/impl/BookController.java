@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import restdatajpa.domain.entity.BookEntity;
 import restdatajpa.persistence.IBookRepository;
-import restdatajpa.presentation.controller.ICrudController;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/books")
 @Validated
-public class BookController implements ICrudController<BookEntity, Long> {
+public class BookController {
     private final IBookRepository iBookRepository;
 
     @GetMapping
@@ -27,15 +26,19 @@ public class BookController implements ICrudController<BookEntity, Long> {
 
     @GetMapping("/{bookId}")
     public ResponseEntity<BookEntity> findById(@PathVariable final Long bookId) {
-        Optional<BookEntity> bookEntity = iBookRepository.findById(bookId);
-        return bookEntity.map(ResponseEntity::ok)
-                         .orElseGet(() -> ResponseEntity.notFound()
-                                                        .build());
+        Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookId);
+        return ResponseEntity.of(bookEntityOptional);
     }
 
     @PutMapping
-    public ResponseEntity<BookEntity> update(@Valid @RequestBody final BookEntity bookEntity) {
-        return ResponseEntity.ok(iBookRepository.save(bookEntity));
+    public ResponseEntity<Void> update(@Valid @RequestBody final BookEntity bookEntity) {
+        Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookEntity.getId());
+        if (bookEntityOptional.isEmpty()) {
+            return ResponseEntity.notFound()
+                                 .build();
+        }
+        return ResponseEntity.noContent()
+                             .build();
     }
 
     @PostMapping
@@ -44,7 +47,10 @@ public class BookController implements ICrudController<BookEntity, Long> {
     }
 
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<BookEntity> deleteById(@PathVariable final Long bookId) {
-        return null;
+    public ResponseEntity<Void> deleteById(@PathVariable final Long bookId) {
+        Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookId);
+        bookEntityOptional.ifPresent(iBookRepository::delete);
+        return ResponseEntity.noContent()
+                             .build();
     }
 }
