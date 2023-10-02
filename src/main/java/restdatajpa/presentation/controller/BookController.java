@@ -1,5 +1,11 @@
 package restdatajpa.presentation.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +23,8 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 @RequestMapping("/books")
 @Validated
+@Tag(name = "BookController",
+     description = "BookController management APIs")
 public class BookController {
     private final IBookRepository iBookRepository;
     private final Logger log = Logger.getLogger(BookController.class.getName());
@@ -28,7 +36,17 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookEntity> findById(@PathVariable final Long bookId) {
+    @Operation(summary = "Busca un libro por su id",
+               description = "Get a Tutorial object by specifying its id. The response is Tutorial object with id, title, description and published status.",
+               tags = {"tutorials", "get"})
+    @ApiResponse(responseCode = "200",
+                 content = {@Content(schema = @Schema(implementation = BookEntity.class),
+                                     mediaType = "application/json")})
+    @ApiResponse(responseCode = "404",
+                 content = {@Content(schema = @Schema())})
+    public ResponseEntity<BookEntity> findById(@Parameter(
+            description = "Id del libro a buscar"
+    ) @PathVariable final Long bookId) {
         Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookId);
         return ResponseEntity.of(bookEntityOptional);
     }
