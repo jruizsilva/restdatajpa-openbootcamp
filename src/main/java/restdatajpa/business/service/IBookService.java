@@ -10,5 +10,4 @@ public interface IBookService {
     BookEntity create(BookEntity bookEntity);
     BookEntity update(BookEntity bookEntity);
     void deleteById(Long id);
-    Double calculatePrice(BookEntity bookEntity);
 }
