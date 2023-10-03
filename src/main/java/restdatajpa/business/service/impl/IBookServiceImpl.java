@@ -2,8 +2,11 @@ package restdatajpa.business.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import restdatajpa.business.service.IBookService;
+import restdatajpa.common.exception.BookException;
+import restdatajpa.common.util.constants.BookConstants;
 import restdatajpa.domain.entity.BookEntity;
 import restdatajpa.persistence.IBookRepository;
 
@@ -25,7 +28,8 @@ public class IBookServiceImpl implements IBookService {
     public BookEntity findById(Long id) {
         Optional<BookEntity> bookEntityOptional = iBookRepository.findById(id);
         if (bookEntityOptional.isEmpty()) {
-            throw new RuntimeException("Book not found");
+            throw new BookException(HttpStatus.NOT_FOUND,
+                                    String.format(BookConstants.BOOK_NOT_FOUND_MESSAGE_ERROR, id));
         }
         return bookEntityOptional.get();
     }
@@ -37,6 +41,11 @@ public class IBookServiceImpl implements IBookService {
 
     @Override
     public BookEntity update(BookEntity bookEntity) {
+        Optional<BookEntity> bookEntityOptional = iBookRepository.findById(bookEntity.getId());
+        if (bookEntityOptional.isEmpty()) {
+            throw new BookException(HttpStatus.NOT_FOUND,
+                                    String.format(BookConstants.BOOK_NOT_FOUND_MESSAGE_ERROR, bookEntity.getId()));
+        }
         return iBookRepository.save(bookEntity);
     }
 
@@ -44,10 +53,10 @@ public class IBookServiceImpl implements IBookService {
     public void deleteById(Long id) {
         Optional<BookEntity> bookEntityOptional = iBookRepository.findById(id);
         if (bookEntityOptional.isEmpty()) {
-            throw new RuntimeException("No existe un libro con ese id");
+            throw new BookException(HttpStatus.NOT_FOUND,
+                                    String.format(BookConstants.BOOK_NOT_FOUND_MESSAGE_ERROR, id));
         }
         iBookRepository.deleteById(id);
     }
-
 
 }
