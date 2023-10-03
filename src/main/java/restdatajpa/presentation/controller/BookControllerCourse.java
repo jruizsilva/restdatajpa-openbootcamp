@@ -25,9 +25,9 @@ import java.util.logging.Logger;
 @Validated
 @Tag(name = "BookController",
      description = "BookController management APIs")
-public class BookController {
+public class BookControllerCourse {
     private final IBookRepository iBookRepository;
-    private final Logger log = Logger.getLogger(BookController.class.getName());
+    private final Logger log = Logger.getLogger(BookControllerCourse.class.getName());
 
     @GetMapping
     public ResponseEntity<List<BookEntity>> findAll() {
@@ -74,7 +74,6 @@ public class BookController {
             return ResponseEntity.notFound()
                                  .build();
         }
-        ;
         return ResponseEntity.ok(iBookRepository.save(bookEntity));
     }
 
