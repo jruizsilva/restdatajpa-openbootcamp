@@ -1,6 +1,7 @@
 package restdatajpa.business.facade.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import restdatajpa.business.facade.IBookFacade;
 import restdatajpa.business.mapper.book.IBookDtoMapper;
 import restdatajpa.business.mapper.book.IBookRequestMapper;
@@ -11,6 +12,7 @@ import restdatajpa.domain.entity.BookEntity;
 
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 public class IBookFacadeImpl implements IBookFacade {
     private final IBookService iBookService;

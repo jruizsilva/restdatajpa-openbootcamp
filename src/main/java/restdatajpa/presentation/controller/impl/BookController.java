@@ -27,29 +27,35 @@ public class BookController implements ICrudController<BookDto, Long, BookReques
 
     @Override
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookDto> findById(@PathVariable Long bookId) {
+    public ResponseEntity<BookDto> findById(
+            @PathVariable final Long bookId) {
         BookDto bookDto = iBookFacade.findById(bookId);
         return ResponseEntity.ok(bookDto);
     }
 
     @Override
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<Void> deleteById(Long bookId) {
+    public ResponseEntity<Void> deleteById(
+            @PathVariable final Long bookId) {
         iBookFacade.deleteById(bookId);
         return null;
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<BookDto> create(@Valid @RequestBody BookRequest bookRequest) {
+    public ResponseEntity<BookDto> create(
+            @Valid
+            @RequestBody final BookRequest bookRequest) {
         BookDto bookDto = iBookFacade.create(bookRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(bookDto);
     }
 
     @Override
-    public ResponseEntity<BookDto> update(Long id, BookRequest bookRequest) {
-        BookDto bookDto = iBookFacade.update(id,
+    @PutMapping("/{bookId}")
+    public ResponseEntity<BookDto> update(@PathVariable final Long bookId,
+                                          @RequestBody final BookRequest bookRequest) {
+        BookDto bookDto = iBookFacade.update(bookId,
                                              bookRequest);
         return ResponseEntity.ok(bookDto);
     }
